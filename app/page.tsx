@@ -1,11 +1,12 @@
 'use client';
 
+import ImageGrid from '@/components/imageGrid';
 import { GET_IMAGES } from '@/queries/imagesQuery';
 import { useQuery } from '@apollo/client';
 
 export default function Home() {
   const { loading, error, data } = useQuery(GET_IMAGES, {
-    variables: { first: 5, after: '', title: '' }, // Inicializamos con first = 5 y after = null
+    variables: { first: 15, after: '', title: '' }, // Inicializamos con first = 5 y after = null
     skip: false, // Evitamos la consulta si no hay más páginas
     fetchPolicy: 'cache-and-network', // Siempre busca en caché pero también en red
   });
@@ -18,7 +19,9 @@ export default function Home() {
 
   return (
     <div>
-      <main></main>
+      <main>
+        <ImageGrid images={data.images} />
+      </main>
     </div>
   );
 }
