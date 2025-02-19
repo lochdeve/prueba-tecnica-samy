@@ -26,11 +26,6 @@ const useGrid = () => {
 
   const loadMoreImages = async (newSearch?: string, newAfter?: string) => {
     try {
-      console.log('Intento de carga', {
-        fetching: paginationRef.current.isFetching,
-        hasMore: paginationRef.current.hasMore,
-      });
-
       if (
         paginationRef.current.isFetching ||
         (!newAfter && !paginationRef.current.hasMore)
@@ -49,7 +44,6 @@ const useGrid = () => {
         },
       });
 
-      console.log('Resultado recibido', result);
       const data = result.data;
 
       // Actualizamos estado y referencia de manera sincronizada
