@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import useNavbar from './hooks/useNavbar';
-import './navbar.css';
+import './index.css';
 
 const Navbar = () => {
   const { handleSearch } = useNavbar();
