@@ -1,0 +1,77 @@
+input::placeholder {
+  color: #a1a1a1;
+}
+
+.navbar-container {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: white;
+}
+
+.logo-container {
+  width: auto;
+  justify-content: flex-start;
+  padding-left: 10px;
+}
+
+.search-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-button {
+  display: inline-flex;
+  background: #f2f2f2;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  border-radius: 15px;
+  padding: 5px 10px;
+  max-width: none;
+  width: 250px;
+}
+
+.search-input {
+  background: #f2f2f2;
+  border: none;
+  transition: width 0.3s ease;
+  color: #a1a1a1;
+  outline: none;
+  min-width: 220px;
+  font-size: 16px;
+}
+
+/* Versión desktop */
+@media (min-width: 769px) {
+  .navbar-container {
+    padding: 50px 80px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .search-container {
+    width: 50%;
+    justify-content: flex-end;
+  }
+}
+
+/* Ajustes de logo para móvil */
+@media (max-width: 768px) {
+  .navbar-logo {
+    transform: scale(0.8);
+    transform-origin: left center;
+  }
+
+  .logo-container {
+    width: auto;
+    justify-content: flex-start;
+    padding-left: 10px;
+  }
+
+  .search-container {
+    justify-content: center;
+  }
+}

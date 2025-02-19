@@ -1,6 +1,7 @@
 'use client';
 
 import { GET_IMAGES } from '@/api/queries/imagesQuery';
+import { useGlobalContext } from '@/context/useGlobalContext';
 import { ImageType } from '@/types';
 import { useLazyQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';
@@ -8,50 +9,94 @@ import { useEffect, useRef, useState } from 'react';
 const NUMBER_OF_IMAGES = 6;
 
 const useGrid = () => {
+  const { search } = useGlobalContext();
   const [images, setImages] = useState<ImageType[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [endCursor, setEndCursor] = useState<string | undefined>(undefined);
-  const isFetching = useRef(false);
+  const [notFound, setNotFound] = useState(false);
 
-  const [getImages, { loading, error }] = useLazyQuery(GET_IMAGES, {
-    variables: { first: NUMBER_OF_IMAGES, after: endCursor, title: '' },
-    fetchPolicy: 'cache-and-network',
+  // Usamos una referencia para el estado actual de paginación
+  const paginationRef = useRef({
+    hasMore: true,
+    endCursor: undefined as string | undefined,
+    isFetching: false,
   });
 
-  const loadMoreImages = async () => {
-    if (isFetching.current || !hasMore) return;
+  const [getImages, { loading, error }] = useLazyQuery(GET_IMAGES, {
+    fetchPolicy: 'no-cache',
+  });
 
-    isFetching.current = true;
+  const loadMoreImages = async (newSearch?: string, newAfter?: string) => {
+    try {
+      console.log('Intento de carga', {
+        fetching: paginationRef.current.isFetching,
+        hasMore: paginationRef.current.hasMore,
+      });
 
-    const result = await getImages({
-      variables: { first: NUMBER_OF_IMAGES, before: endCursor, title: '' },
-    });
-    const data = result.data;
+      if (
+        paginationRef.current.isFetching ||
+        (!newAfter && !paginationRef.current.hasMore)
+      )
+        return;
 
-    setImages((prevImages) => {
-      return [...prevImages, ...data.images.nodes];
-    });
-    setHasMore(data.images.pageInfo.hasNextPage);
-    setEndCursor(data.images.pageInfo.endCursor);
+      // Actualizamos referencia antes de la petición
+      paginationRef.current.isFetching = true;
 
-    isFetching.current = false;
+      const result = await getImages({
+        variables: {
+          first: NUMBER_OF_IMAGES,
+          after:
+            newAfter !== undefined ? newAfter : paginationRef.current.endCursor,
+          title: newSearch !== undefined ? newSearch : search,
+        },
+      });
+
+      console.log('Resultado recibido', result);
+      const data = result.data;
+
+      // Actualizamos estado y referencia de manera sincronizada
+      setImages((prev) =>
+        newAfter ? [...prev, ...data.images.nodes] : data.images.nodes
+      );
+      setNotFound(data.images.nodes.length === 0);
+
+      // Actualizamos referencia después del estado
+      paginationRef.current = {
+        hasMore: data.images.pageInfo.hasNextPage,
+        endCursor: data.images.pageInfo.endCursor,
+        isFetching: false,
+      };
+    } catch (error) {
+      console.error('Error:', error);
+      paginationRef.current.isFetching = false;
+    }
   };
 
   useEffect(() => {
-    if (images.length === 0 && !isFetching.current) {
-      loadMoreImages();
-    }
-  }, []);
+    const resetAndLoad = async () => {
+      // Reset sincronizado de estado y referencia
+      setImages([]);
+      setNotFound(false);
+
+      paginationRef.current = {
+        hasMore: true,
+        endCursor: undefined,
+        isFetching: false,
+      };
+
+      await loadMoreImages(search, undefined);
+    };
+
+    resetAndLoad();
+  }, [search]);
 
   useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + window.scrollY >=
           document.body.offsetHeight - 100 &&
-        !isFetching.current &&
-        hasMore
+        !paginationRef.current.isFetching &&
+        paginationRef.current.hasMore
       ) {
-        loadMoreImages();
+        loadMoreImages(search, paginationRef.current.endCursor);
       }
     };
 
@@ -59,13 +104,13 @@ const useGrid = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [hasMore, isFetching.current, endCursor]);
+  }, []);
 
   return {
     images,
-    hasMore,
     loading,
     error,
+    notFound,
   };
 };
 
