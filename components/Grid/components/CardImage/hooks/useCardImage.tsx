@@ -6,7 +6,7 @@ import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 
 const useCardImage = ({ image }: { image: ImageType }) => {
-  const [likeImage, { loading, error }] = useMutation(LIKE_IMAGE);
+  const [likeImage, { error }] = useMutation(LIKE_IMAGE);
   const [liked, setLiked] = useState(image.liked);
   const [likesCount, setLikesCount] = useState(image.likesCount);
 
