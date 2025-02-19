@@ -1,6 +1,6 @@
 'use client';
 
-import { GET_IMAGES } from '@/api/imagesQuery';
+import { GET_IMAGES } from '@/api/queries/imagesQuery';
 import { ImageType } from '@/types';
 import { useLazyQuery } from '@apollo/client';
 import { useEffect, useRef, useState } from 'react';

@@ -1,7 +1,11 @@
+'use client';
 import { ImageType } from '@/types';
 import Image from 'next/image';
+import useCardImage from './hooks/useCardImage';
 
 const CardImage = ({ image }: { image: ImageType }) => {
+  const { handleLike, liked, likesCount } = useCardImage({ image });
+
   return (
     <>
       <div
@@ -49,14 +53,23 @@ const CardImage = ({ image }: { image: ImageType }) => {
             height={300}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
-          <div className='heart-icon'>
-            <Image src={'/like.png'} alt='like' width={30} height={30} />
+          <div className='heart-icon' onClick={handleLike}>
+            {liked ? (
+              <Image src={'/liked.png'} alt='like' width={30} height={30} />
+            ) : (
+              <Image
+                src={'/without-like.png'}
+                alt='like'
+                width={30}
+                height={30}
+              />
+            )}
             <span
               style={{
                 color: 'white',
               }}
             >
-              {image.likesCount}
+              {likesCount}
             </span>
             <Image src={'/share.png'} alt='share' width={30} height={30} />
             <span
