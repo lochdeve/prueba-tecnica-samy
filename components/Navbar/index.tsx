@@ -13,10 +13,10 @@ const Navbar = () => {
         <Image
           src='/logo.png'
           alt='logo'
-          priority
           width={138.53}
           height={24}
           className='navbar-logo'
+          style={{ height: 'auto' }}
         />
       </div>
       <div className='search-container'>
