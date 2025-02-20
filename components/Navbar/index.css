@@ -40,7 +40,7 @@ input::placeholder {
   transition: width 0.3s ease;
   color: #a1a1a1;
   outline: none;
-  min-width: 220px;
+  min-width: 210px;
   font-size: 16px;
 }
 
