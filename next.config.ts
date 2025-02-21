@@ -1,9 +1,12 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ['loremflickr.com'],
+    domains: ["loremflickr.com"],
+  },
+  experimental: {
+    forceSwcTransforms: true,
   },
 };
 
